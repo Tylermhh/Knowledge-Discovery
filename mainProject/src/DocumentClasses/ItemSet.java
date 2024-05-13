@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static java.lang.System.exit;
+
 public class ItemSet implements Comparable {
     private ArrayList<Integer> items;
 
@@ -118,6 +120,23 @@ public class ItemSet implements Comparable {
         // if there were no differences in the itemsets, they are equal so return 0
         return 0;
 
+    }
+
+    public ItemSet makeNewSetWithout(ArrayList<Integer> exclusions){
+        int count = 0;
+        ItemSet newSet = new ItemSet();
+        for (Integer item : this.items){
+            if (!exclusions.contains(item)){    // if item is not part of the exclusion list
+                newSet.items.add(item);     // add the item to the newSet to be returned
+            } else {
+                count++;    // just to check if we are trying to exclude something that isnt even in there
+            }
+        }
+        if (count > 0){
+            System.out.println("tried to exclude something that isnt in there");
+            exit(1);
+        }
+        return newSet;
     }
 
 
