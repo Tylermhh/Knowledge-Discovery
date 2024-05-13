@@ -19,12 +19,14 @@ public class Lab5 {
     public static void main(String[] args){
         process("D:\\College\\Com Sci\\Junior Year\\466\\Labs\\mainProject\\src\\InputFiles\\shopping_data.txt");
         findFrequentSingleItemSets();
-        for (ItemSet set : frequentItemSets.get(1)){
-            System.out.print(set.getItems());
-        }
-        System.out.println();
-        findFrequentItemSets(2);
-//        System.out.println(frequentItemSets.get(1).size());
+        findFrequentItemSets(5);
+//        for (int i=0; i<5; i++){
+//            for (ItemSet set : frequentItemSets.get(i+1)){
+//                System.out.print(set.getItems());
+//            }
+//            System.out.println();
+//        }
+        System.out.println(frequentItemSets);
     }
 
     public static void process(String filePath){
@@ -52,11 +54,27 @@ public class Lab5 {
         findFrequentSingleItemSets();
 
         for (int i=2 ; i<=k; i++){
+            frequentItemSets.put(i, new ArrayList<>());
+            attemptedItemSets.put(i, new ArrayList<>());
             ArrayList<ItemSet> candidates = candidateGen(i);
 //            System.out.println("ItemSets of size " + i);
 //            for (ItemSet set : candidates){
 //                System.out.print(set.getItems());
 //            }
+            for (ItemSet freqItemSetCandidate : candidates){
+                if (!frequentItemSets.get(i).contains(freqItemSetCandidate) && !attemptedItemSets.get(i).contains(freqItemSetCandidate)){
+
+                    // record attempt to add to frequentItemSets
+                    attemptedItemSets.get(i).add(freqItemSetCandidate);
+
+                    double support = numTransactionsContaining(freqItemSetCandidate) / transactions.size();
+
+                    // if support is high enough add it to freqItemSets
+                    if (isFrequent(freqItemSetCandidate)){
+                        frequentItemSets.get(i).add(freqItemSetCandidate);
+                    }
+                }
+            }
 
         }
 //        Collections.sort(frequentItemSets.get(k));
@@ -70,7 +88,7 @@ public class Lab5 {
 
 
         for (int i=0; i<prevItemSets.size() - 1; i++){
-            for (int j=i; j<prevItemSets.size(); j++){
+            for (int j=i+1; j<prevItemSets.size(); j++){
                 ItemSet firstSet = prevItemSets.get(i);
                 ItemSet secondSet = prevItemSets.get(j);
 

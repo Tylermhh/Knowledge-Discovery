@@ -121,12 +121,7 @@ public class ItemSet implements Comparable {
     }
 
 
-//    public String toString() {
-//        String result = "[";
-//        for (Integer item : this.items){
-//            result.concat(String.valueOf(item));
-//        }
-//        result.concat("]");
-//        return result;
-//    }
+    public String toString() {
+        return this.items.toString();
+    }
 }
