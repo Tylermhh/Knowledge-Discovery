@@ -117,7 +117,7 @@ public class Lab5 {
     }
 
     // combines the given two lists assuming they are identical except for last elements
-    private static ArrayList<Integer> combineLists(ItemSet firstSet, ItemSet secondSet) {
+    static ArrayList<Integer> combineLists(ItemSet firstSet, ItemSet secondSet) {
         ArrayList<Integer> firstList = firstSet.getItems();
         ArrayList<Integer> secondList = secondSet.getItems();
         ArrayList<Integer> combinedItemsList = new ArrayList<>();

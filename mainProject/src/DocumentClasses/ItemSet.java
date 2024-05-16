@@ -132,15 +132,21 @@ public class ItemSet implements Comparable {
                 count++;    // just to check if we are trying to exclude something that isnt even in there
             }
         }
-        if (count > 0){
-            System.out.println("tried to exclude something that isnt in there");
-            exit(1);
-        }
+//        if (count > 0){
+//            System.out.println("tried to exclude something that isnt in there");
+//            exit(1);
+//        }
         return newSet;
     }
 
 
     public String toString() {
         return this.items.toString();
+    }
+
+    public boolean supportsRule(Rule r){
+
+
+        return true;
     }
 }

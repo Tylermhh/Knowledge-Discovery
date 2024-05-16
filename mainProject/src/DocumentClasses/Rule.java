@@ -1,5 +1,7 @@
 package DocumentClasses;
 
+import java.util.ArrayList;
+
 public class Rule {
     private ItemSet left, right;
 
@@ -21,5 +23,17 @@ public class Rule {
         return this.right;
     }
 
+    // returns the combined itemset containing both left and right sides of rule
+    public ItemSet getCombined(){
+        ItemSet result = new ItemSet((ArrayList<Integer>) this.left.getItems().clone());
+        for (Integer item : this.right.getItems()){
+            result.getItems().add(item);
+        }
+        return result;
+    }
+
+    public String toString(){
+        return this.left.toString() + "->" + this.right.toString();
+    }
 
 }
