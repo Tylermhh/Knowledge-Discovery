@@ -50,38 +50,43 @@ public class Matrix {
             entropy += ratio * log2(ratio);
         }
 
-        return entropy;
+        return entropy; // TODO: convert neg to pos
     }
 
     private double findEntropy(int attribute, ArrayList<Integer> rows){
-        double entropy = 0;
-        HashMap<Integer, ArrayList<Integer>> rowsForEachAttributeVal = new HashMap<>();     // stores the row numbers per attribute category
-
-        for (Integer rowNum : rows){
-            ArrayList<Integer> row = this.matrix.get(rowNum);
-            int attributeCategory = row.get(attribute);         // get the cateogory that the row gets put under if split on given attribute
-            if (rowsForEachAttributeVal.containsKey(attributeCategory)){        // if this attribute val is already seen before, just add the row to list of related rows
-                rowsForEachAttributeVal.get(attributeCategory).add(rowNum);
-            } else {        // if it is a new attribute value/category, make a new arraylsit for it
-                ArrayList<Integer> rowsForAttribute = new ArrayList<>();
-                rowsForAttribute.add(rowNum);
-                rowsForEachAttributeVal.put(attributeCategory, rowsForAttribute);
-            }
-        }
+        double totalEntropy = 0;
+        HashMap<Integer, ArrayList<Integer>> rowsForEachAttributeVal = split(attribute, rows);     // stores the row numbers per attribute category
 
         for (Map.Entry<Integer, ArrayList<Integer>> entry : rowsForEachAttributeVal.entrySet()){
-
+            double entriesInCateogory = entry.getValue().size();        // number of elements in the node after the split
+            ArrayList<Integer> rowsForCategory = entry.getValue();
+            totalEntropy += (entriesInCateogory / rows.size()) * findEntropy(rowsForCategory);
         }
 
-        return entropy;
+        return totalEntropy;    // TODO: convert neg to pos?
     }
 
     private double findGain(int attribute, ArrayList<Integer> rows){
-        return 0;
+        double gain = 0;
+
+        double originalEntropy = findEntropy(rows);
+        double splitEntropy = findEntropy(attribute, rows);
+
+        return originalEntropy - splitEntropy;
     }
 
     public double computeIGR(int attribute, ArrayList<Integer> rows){
-        return 0;
+        double gainRatio = 0;
+        double gain = findGain(attribute, rows);
+        HashMap<Integer, ArrayList<Integer>> rowsForEachAttributeVal = split(attribute, rows);     // stores the row numbers per attribute category
+        double denominator = 0;
+
+        for (Map.Entry<Integer, ArrayList<Integer>> entry : rowsForEachAttributeVal.entrySet()){
+            double entriesInCateogory = entry.getValue().size();        // number of elements in the node after the split
+            denominator += (entriesInCateogory / rows.size()) * log2(entriesInCateogory / rows.size());
+        }
+
+        return gainRatio / denominator;
     }
 
     public int findMostCommonValue(ArrayList<Integer> rows){
@@ -104,8 +109,20 @@ public class Matrix {
     }
 
     public HashMap<Integer, ArrayList<Integer>> split(int attribute, ArrayList<Integer> rows){
-        HashMap<Integer, ArrayList<Integer>> result = new HashMap<>();
-        return result;
+        HashMap<Integer, ArrayList<Integer>> rowsForEachAttributeVal = new HashMap<>();
+
+        for (Integer rowNum : rows){
+            ArrayList<Integer> row = this.matrix.get(rowNum);
+            int attributeCategory = row.get(attribute);         // get the cateogory that the row gets put under if split on given attribute
+            if (rowsForEachAttributeVal.containsKey(attributeCategory)){        // if this attribute val is already seen before, just add the row to list of related rows
+                rowsForEachAttributeVal.get(attributeCategory).add(rowNum);
+            } else {        // if it is a new attribute value/category, make a new arraylist for it
+                ArrayList<Integer> rowsForAttribute = new ArrayList<>();
+                rowsForAttribute.add(rowNum);
+                rowsForEachAttributeVal.put(attributeCategory, rowsForAttribute);
+            }
+        }
+        return rowsForEachAttributeVal;
     }
 
     public String toString(){
