@@ -94,7 +94,7 @@ public class Matrix {
             denominator += (entriesInCateogory / rows.size()) * log2(entriesInCateogory / rows.size());
         }
 
-        return gain / denominator;
+        return gain / Math.abs(denominator);
     }
 
     public int findMostCommonValue(ArrayList<Integer> rows, int colOfClass){
@@ -136,5 +136,60 @@ public class Matrix {
 
     public String toString(){
         return this.matrix.toString();
+    }
+
+    // returns index of all rows
+    public ArrayList<Integer> findAllRows(){
+        ArrayList<Integer> allRows = new ArrayList<>();
+        for (int i=0; i<this.matrix.size(); i++){
+            allRows.add(i);
+        }
+        return allRows;
+    }
+
+    // returns the index of the category attribute (the class)
+    public int getCategoryAttribute(){
+        return this.matrix.get(0).size() - 1;
+    }
+
+    //TODO
+    public double findProb(int[] row, int category){
+
+        return 0;
+    }
+
+    // returns sth like P(A|B) or P(young | owns a car) to get prob of person being young given that they own a car where "own a car" is category and "young" is condition
+    public double probOfCategoryGivenConditionForAttribute(int category, int condition, int attributeIdx){
+        double prob = 0;
+        int categoryAttribute = getCategoryAttribute();
+        int totalNumForCatgory = countRowsGivenCategory(category);
+        int numConditionGivenCategory = 0;
+
+        for (ArrayList<Integer> row : this.matrix){
+            if (row.get(attributeIdx) == condition && row.get(categoryAttribute) == category){
+                numConditionGivenCategory++;
+            }
+        }
+
+        prob = (double) numConditionGivenCategory / totalNumForCatgory;
+
+        return prob;
+    }
+
+    // returns the total number of rows with the given category (class. last column)
+    public int countRowsGivenCategory(int category){
+        int categoryAttribute = getCategoryAttribute();
+        int prob = 0;
+
+        for (ArrayList<Integer> row : this.matrix){
+            if (row.get(categoryAttribute) == category){
+                prob++;
+            }
+        }
+        return prob;
+    }
+
+    public int findCategory(int[] row){
+        return 0;
     }
 }
