@@ -29,6 +29,9 @@ public class Matrix {
     }
     private HashSet<Integer> findDifferentValues(int attribute, ArrayList<Integer> rows){
         HashSet<Integer> result = new HashSet<>();
+        for (Integer rowNum : rows){
+            result.add(this.matrix.get(rowNum).get(attribute));
+        }
         return result;
     }
 
@@ -153,9 +156,13 @@ public class Matrix {
     }
 
     //TODO
-    public double findProb(int[] row, int category){
-
-        return 0;
+    public double findProb(ArrayList<Integer> row, int category){
+        double probCategoryGivenCond = 1;
+        double probCategoryAlone = (double) countRowsGivenCategory(category) / this.matrix.size();
+        for (int i=0; i<row.size(); i++){
+            probCategoryGivenCond = probCategoryGivenCond * probOfCategoryGivenConditionForAttribute(category, row.get(i), i);
+        }
+        return probCategoryGivenCond * probCategoryAlone;
     }
 
     // returns sth like P(A|B) or P(young | owns a car) to get prob of person being young given that they own a car where "own a car" is category and "young" is condition
@@ -170,8 +177,9 @@ public class Matrix {
                 numConditionGivenCategory++;
             }
         }
+        HashSet<Integer> allValuesForAttribute = findDifferentValues(attributeIdx, findAllRows());
 
-        prob = (double) numConditionGivenCategory / totalNumForCatgory;
+        prob = (double) (numConditionGivenCategory + (double) 1/this.matrix.size()) / (totalNumForCatgory + allValuesForAttribute.size() * (double) 1 / this.matrix.size());
 
         return prob;
     }
@@ -189,7 +197,26 @@ public class Matrix {
         return prob;
     }
 
-    public int findCategory(int[] row){
-        return 0;
+    public int findCategory(ArrayList<Integer> row){
+        HashMap<Integer, ArrayList<Integer>> rowsForEachAttributeVal = split(getCategoryAttribute(), findAllRows());     // stores all the different categories in the dataset
+        HashMap<Integer, Double> probPerCategory = new HashMap<>();
+        int maxCategory = -1;
+        double maxProbability = 0;
+        for (Map.Entry<Integer, ArrayList<Integer>> entry : rowsForEachAttributeVal.entrySet()){
+            probPerCategory.put(entry.getKey(), findProb(row, entry.getKey()));     // calculate probability of each category and add to hashmap
+        }
+
+        for (Map.Entry<Integer, Double> entry : probPerCategory.entrySet()){
+            System.out.println("For value " + entry.getKey() + ": Probability is: " + entry.getValue());
+
+            if (entry.getValue() > maxProbability){
+                maxCategory = entry.getKey();
+                maxProbability = entry.getValue();
+            }
+        }
+
+        System.out.println("Expected category: " + maxCategory);
+
+        return maxCategory;
     }
 }

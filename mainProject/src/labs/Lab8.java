@@ -12,8 +12,8 @@ public class Lab8 {
     public static void main(String[] args){
         Matrix data = new Matrix(process("D:\\College\\Com Sci\\Junior Year\\466\\Labs\\mainProject\\src\\InputFiles\\data.txt"));
         ArrayList<Integer> userInput = getCustomerInput(data);
-
-        System.out.println(userInput);
+        data.findCategory(userInput);
+//        System.out.println(userInput);
 
     }
 
